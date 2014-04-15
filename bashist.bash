@@ -174,7 +174,7 @@ bashist::tab_command() {
   declare -i exit_code
 
   case "$(bashist::platform)" in
-    linux) cmd=("-c" "$(printf "%q " "$@")") ;; # gnu
+    linux) cmd=("-c" "$(printf "%q " "$@")" "--return") ;; # gnu
     *)     cmd=("$@") ;; # bsd
   esac
 
