@@ -165,17 +165,23 @@ bashist::tab() {
 # detecting its stdout/stderr streams are not a TTY. (Often, programs will
 # disable colorized output when stdout/stderr are not attached to a TTY.)
 #
-# In general, you should prefer `bashist::tab_command` to `bashist::tab` since it
-# preserves colors. It may, however, interfere with commands that make heavy
-# use of terminal control libraries, like progress indicators.
+# In general, you should prefer `bashist::tab_command` to `bashist::tab` since
+# it preserves colors and the command's exit code. It may, however, interfere
+# with commands that make heavy use of terminal control libraries, like progress
+# indicators.
 bashist::tab_command() {
   local cmd
+  declare -i exit_code
+
   case "$(bashist::platform)" in
     linux) cmd=("-c" "$(printf "%q " "$@")") ;; # gnu
     *)     cmd=("$@") ;; # bsd
   esac
+
   script -q /dev/null "${cmd[@]}" | bashist::tab
+  exit_code=${PIPESTATUS[0]}
   echo
+  return $exit_code
 }
 
 # bashist::force_cr_on_nl
