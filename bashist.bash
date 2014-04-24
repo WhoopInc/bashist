@@ -272,7 +272,7 @@ bashist::which() {
 bashist::ensure_singleton() {
   pid_file="/tmp/$1"
   touch "${pid_file}"
-  read pid < "${pid_file}"
+  read pid < "${pid_file}" || true
 
   if [[ ! -z "$pid" ]] && ps -p "$pid" > /dev/null; then
     bashist::die "{red}'$0' is already running! aborting...{clear}"
