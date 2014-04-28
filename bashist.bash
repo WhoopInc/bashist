@@ -8,15 +8,6 @@ readonly _bashist_color_codes=(
   under nounder                                 # underline, nounderline
 )
 
-readonly _bashist_escapes=(
-  "$(tput sgr0)"
-  "$(tput setaf 0)" "$(tput setaf 1)" "$(tput setaf 2)" "$(tput setaf 3)"
-  "$(tput setaf 4)" "$(tput setaf 5)" "$(tput setaf 6)" "$(tput setaf 7)"
-  "$(tput bold)" "$(tput dim)"
-  "$(tput rev)"
-  "$(tput smul)" "$(tput rmul)"
-)
-
 # main
 #
 # This function is called at the end of this file so that we can access
@@ -31,6 +22,15 @@ main() {
       _bashist_sed_flags="-u"
       ;;
   esac
+
+  bashist::which tput && _bashist_escapes=(
+    "$(tput sgr0)"
+    "$(tput setaf 0)" "$(tput setaf 1)" "$(tput setaf 2)" "$(tput setaf 3)"
+    "$(tput setaf 4)" "$(tput setaf 5)" "$(tput setaf 6)" "$(tput setaf 7)"
+    "$(tput bold)" "$(tput dim)"
+    "$(tput rev)"
+    "$(tput smul)" "$(tput rmul)"
+  )
 }
 
 
@@ -174,11 +174,14 @@ bashist::tab_command() {
   declare -i exit_code
 
   case "$(bashist::platform)" in
-    linux) cmd=("-c" "$(printf "%q " "$@")" "--return") ;; # gnu
-    *)     cmd=("$@") ;; # bsd
+    windows)
+      "$@" | bashist::tab ;;
+    linux)
+      script -q /dev/null -c "$(printf "%q " "$@")" --return | bashist::tab ;;
+    *)
+      script -q /dev/null "$@" | bashist::tab ;;
   esac
 
-  script -q /dev/null "${cmd[@]}" | bashist::tab
   exit_code=${PIPESTATUS[0]}
   echo
   return $exit_code
