@@ -23,14 +23,14 @@ main() {
       ;;
   esac
 
-  bashist::which tput && _bashist_escapes=(
+  _bashist_escapes=(
     "$(tput sgr0)"
     "$(tput setaf 0)" "$(tput setaf 1)" "$(tput setaf 2)" "$(tput setaf 3)"
     "$(tput setaf 4)" "$(tput setaf 5)" "$(tput setaf 6)" "$(tput setaf 7)"
     "$(tput bold)" "$(tput dim)"
     "$(tput rev)"
     "$(tput smul)" "$(tput rmul)"
-  )
+  ) || true
 }
 
 
@@ -53,6 +53,12 @@ pushd() {
 # Prevent `popd` built-in from producing output
 popd() {
   command popd "$@" > /dev/null
+}
+
+# Silence `tput` errors. Usually indicates an unknown terminal, which we can't
+# do anything about.
+tput() {
+  command tput 2> /dev/null
 }
 
 
