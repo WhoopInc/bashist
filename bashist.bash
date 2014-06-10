@@ -193,7 +193,7 @@ bashist::tab_command() {
   return $exit_code
 }
 
-# bashist::force_cr_on_nl
+# bashist::ensure_cr_on_nl
 #
 # Due to some weird TTY bug, intermingling output between a host terminal and a
 # backgrounded SSH terminal that's requested a psuedo-TTY drops carriage
@@ -207,8 +207,8 @@ bashist::tab_command() {
 # guarantee the cursor returns to the beginning of each line. Due to sed
 # limitations, this duplicates carriage returns, but that's invisible to the
 # user.
-bashist::force_cr_on_nl() {
-  exec > >(sed ${_bashist_sed_flags} $'s/^/\r/')
+bashist::ensure_cr_on_nl() {
+  sed ${_bashist_sed_flags} $'s/^/\r/'
 }
 
 # bashist::lines_to_args <lines>
